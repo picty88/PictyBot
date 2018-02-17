@@ -11,7 +11,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
-        protected int count = 1;
+        protected int count = 100;
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -43,7 +43,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             var confirm = await argument;
             if (confirm)
             {
-                this.count = 10;
+                this.count = 1;
                 await context.PostAsync("Reset count.");
             }
             else
