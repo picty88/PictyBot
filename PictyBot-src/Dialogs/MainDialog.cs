@@ -13,24 +13,9 @@ namespace SimpleEchoBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(ShowCarrucel);
+            context.Wait(CardCarrucel);
         }
 
-        private async Task HandleMessageAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            throw new NotImplementedException();
-
-        }
-
-        private async Task ShowCarrucel(IDialogContext context, IAwaitable<object> result)
-        {
-            var reply = context.MakeMessage();
-            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-            reply.Attachments = GetCardsAttachments();
-            await context.PostAsync(reply);
-            //PromptDialog.Text(context, UbicacionSelectedAsync, $"Que lugar quieres ver ");
-  
-        }
 
         private static IList<Attachment> GetCardsAttachments()
         {
@@ -62,21 +47,22 @@ namespace SimpleEchoBot.Dialogs
                     new CardAction(ActionTypes.OpenUrl, "+ Info", value: "https://www.britanico.edu.pe/programa/cursos-para-empresas/")),
             };
         }
-        private static Attachment GetHeroCard(string title, string subtitle, string text, CardImage cardImage, CardAction cardAction)
-        {
-            var heroCard = new HeroCard
-            {
-                //Title = title,
-                //Subtitle = subtitle,
-                // Text = text,
-                Images = new List<CardImage>() { cardImage },
-                Buttons = new List<CardAction>() { cardAction },
-            };
+
+        //private static Attachment GetHeroCard(string title, string subtitle, string text, CardImage cardImage, CardAction cardAction)
+        //{
+        //    var heroCard = new HeroCard
+        //    {
+        //        //Title = title,
+        //        //Subtitle = subtitle,
+        //        // Text = text,
+        //        Images = new List<CardImage>() { cardImage },
+        //        Buttons = new List<CardAction>() { cardAction },
+        //    };
 
             return heroCard.ToAttachment();
         }
 
-        private async Task INTRANET(IDialogContext context, IAwaitable<object> result)
+    private async Task INTRANET(IDialogContext context, IAwaitable<object> result)
         {
             var opciones = new[] { "Búsqueda de documentos", "Mesa de Ayuda"};
 

@@ -8,6 +8,8 @@ using System.Net.Http;
 using System;
 using System.Linq;
 using SimpleEchoBot.Dialogs;
+using System.Collections.Generic;
+using SimpleEchoBot.Extension;
 
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
@@ -25,6 +27,10 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             // check if activity is of type message
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
+                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+                Activity isTypingReply = activity.CreateReply();
+                isTypingReply.Type = ActivityTypes.Typing;
+                await connector.Conversations.ReplyToActivityAsync(isTypingReply);
                 await Conversation.SendAsync(activity, () => new MainDialog());
             }
             else
@@ -42,12 +48,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 // If we handle user deletion, return a real message
             }
             else if (message.Type == ActivityTypes.ConversationUpdate)
-
-                
             {
-                // Handle conversation state changes, like members being added and removed
-                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
-                // Not available in all channels
                 IConversationUpdateActivity update = message;
                 var client = new ConnectorClient(new Uri(message.ServiceUrl), new MicrosoftAppCredentials());
                 if (update.MembersAdded != null && update.MembersAdded.Any())
@@ -56,20 +57,23 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     {
                         if (newMember.Id != message.Recipient.Id)
                         {
-                            var reply = message.CreateReply();
+                            var init = new List<Attachment>()
+                           {
+                                SettingsCardDialog.CardIntranet().ToAttachment(),
+                                SettingsCardDialog.CardInfColaborador().ToAttachment(),
+                                SettingsCardDialog.CardSolucionesTI().ToAttachment(),
+                        };
 
-                            //reply.Attachments.Add(new Attachment()
-                            //{
-                            //    ContentUrl = "https://www.britanico.edu.pe/static/media/logo.svg",
-                            //    ContentType = "image/png",
-                            //    Name = "logo.png"
-                            //});
-                            reply.Text = $"Bienvenido a la Intranet Colaborativa, mi nombre es Brítani, el robot asistente del Británico. Dejame ayudarte en los siguientes temas:";
+
+                            var reply = message.CreateReply();
+                            reply.Text = $"¡Hola, soy Merlí! el asistente virtual del BRITANICO. Permíteme ayudarte en los siguientes temas:";
+                            //reply = message.CreateReply();
+                            reply.Attachments = init;
+                            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                             client.Conversations.ReplyToActivityAsync(reply);
                         }
                     }
                 }
-
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
@@ -78,10 +82,16 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             }
             else if (message.Type == ActivityTypes.Typing)
             {
+                ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
+                Activity reply = message.CreateReply();
+                reply.Type = ActivityTypes.Typing;
+                reply.Text = "...";
+                connector.Conversations.ReplyToActivityAsync(reply);
                 // Handle knowing tha the user is typing
             }
             else if (message.Type == ActivityTypes.Ping)
             {
+
             }
 
             return null;
